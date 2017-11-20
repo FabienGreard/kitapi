@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node ./config/www",
-    "dev": "nodemon ./config/www"
+    "dev": "nodemon ./config/www",
+    "test": "echo \"Error: no test specified\" "
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
