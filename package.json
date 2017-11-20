@@ -1,0 +1,24 @@
+{
+  "name": "KitApi",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node ./config/www",
+    "dev": "nodemon ./config/www"
+  },
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "~1.18.2",
+    "cookie-parser": "~1.4.3",
+    "crypto": "^1.0.1",
+    "express": "~4.15.5",
+    "jsonwebtoken": "^8.1.0",
+    "mongoose": "^4.13.2",
+    "morgan": "~1.9.0",
+    "nodemon": "^1.12.1",
+    "passport": "^0.4.0",
+    "passport-jwt": "^3.0.1",
+    "passport-local": "^1.0.0",
+    "pug": "^2.0.0-rc.4",
+    "serve-favicon": "~2.4.5"
+  }
+}
