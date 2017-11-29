@@ -32,7 +32,14 @@ module.exports = function(app) {
   authRoutes.post('/register', AuthenticationController.register);
 
   // Login route
-  authRoutes.post('/login', requireLogin, AuthenticationController.login);
+  //authRoutes.post('/login', requireLogin, AuthenticationController.login);
+  authRoutes.post('/login', function(req, res, next ){
+    passport.authenticate('local', function(err, user, info) {
+      if (err) { return res.status(401).send({ error: info.error }) }
+      if (!user) { return res.status(401).send({ error: info.error }) }
+      res.json(user);
+    })(req, res, next);
+  }, AuthenticationController.login);
 
 // Set url for API group routes
   app.use('/', apiRoutes, function(req, res) { index('API', [{ title: '/auth', subtitle: '', line: ['/register', '/login']}], res) });
