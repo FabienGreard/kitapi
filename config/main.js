@@ -14,5 +14,5 @@ module.exports = {
     bufferMaxEntries: 0
   },
   // Setting port for server
-  'port': process.env.PORT || 3000
+  'port': process.env.PORT || 8000
 }

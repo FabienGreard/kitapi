@@ -21,9 +21,6 @@ module.exports = function(app) {
     res.render('index', {title: uri, helpers: helpers})
   }
 
-  // Index page
-  app.get('/', function(req, res) { index('API', [{ title: '/api', subtitle: '/auth', line: ['/register', '/login']}], res) });
-
   //=========================
   // Auth Routes
   //=========================
@@ -38,5 +35,5 @@ module.exports = function(app) {
   authRoutes.post('/login', requireLogin, AuthenticationController.login);
 
 // Set url for API group routes
-  app.use('/api', apiRoutes, function(req, res) { index('API', [{ title: '/auth', subtitle: '', line: ['/register', '/login']}], res) });
+  app.use('/', apiRoutes, function(req, res) { index('API', [{ title: '/auth', subtitle: '', line: ['/register', '/login']}], res) });
 };
