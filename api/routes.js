@@ -37,9 +37,9 @@ module.exports = function(app) {
     passport.authenticate('local', function(err, user, info) {
       if (err) { return res.status(401).send({ error: info.error }) }
       if (!user) { return res.status(401).send({ error: info.error }) }
-      res.json(user);
+      AuthenticationController.login(user, res, next)
     })(req, res, next);
-  }, AuthenticationController.login);
+  });
 
 // Set url for API group routes
   app.use('/', apiRoutes, function(req, res) { index('API', [{ title: '/auth', subtitle: '', line: ['/register', '/login']}], res) });
