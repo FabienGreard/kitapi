@@ -1,7 +1,10 @@
 const express = require('express'),
       AuthenticationController = require('./controllers/auth'),
+      UserController = require('./controllers/user.js');
       passportService = require('../config/passport'),
-      passport = require('passport');
+      passport = require('passport'),
+      passportService = require('../config/passport');
+
       // Constants for role types
       const REQUIRE_ADMIN = "Admin",
             REQUIRE_DEV = "Dev",
@@ -14,7 +17,8 @@ const express = require('express'),
 module.exports = function(app) {
   // Initializing route groups
   const apiRoutes = express.Router(),
-        authRoutes = express.Router();
+        authRoutes = express.Router(),
+        userRoutes = express.Router();
 
   // Uri page helper
   function index(uri, helpers, res){
@@ -41,6 +45,15 @@ module.exports = function(app) {
     })(req, res, next);
   });
 
+  //=========================
+  // Users Routes
+  //=========================
+
+  // Set users routes as subgroup/middleware to apiRoutes
+  apiRoutes.use('/users', userRoutes, function(req, res) { index('API - api/users', [{ title: '/all', subtitle: 'Example :', line: ['Return a list of users','{', '"users": [', '{', '"_id": "xxxx",', '}', '{', '"_id": "xxxx",', '}', '}', ']']}, {title: '/+id', subtitle: 'Example :', line: [ 'Return one user', '{', '"email": "email@gmail.com"', '"password": "xxxxx",', '}' ]}], res) });
+
+  userRoutes.get('/all', requireAuth, UserController.getAll);
+
 // Set url for API group routes
-  app.use('/', apiRoutes, function(req, res) { index('API', [{ title: '/auth', subtitle: '', line: ['/register', '/login']}], res) });
+  app.use('/', apiRoutes, function(req, res) { index('API', [{ title: '/auth', subtitle: '', line: ['/register', '/login']},{ title: '/users', subtitle: '', line: ['/', '/+id']}], res) });
 };

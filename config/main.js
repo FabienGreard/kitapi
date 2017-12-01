@@ -1,6 +1,6 @@
 module.exports = {
   // Secret key for JWT signing and encryption
-  'secret': 'super secret passphrase',
+  'secret': '123456',
   // Database connection information
   'uri': 'mongodb://localhost:27017/kitapi',
   // mongoose option

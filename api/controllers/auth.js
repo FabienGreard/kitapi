@@ -1,30 +1,13 @@
-const mongoose = require('mongoose'),
-      jwt = require('jsonwebtoken'),
+const jwt = require('jsonwebtoken'),
       crypto = require('crypto'),
       config = require('../../config/main'),
-      User = require('../models/user');
-
-//connect to MongoDB
-mongoose.connect(config.uri, config.option, function(err) {
-  if(err) console.log('connection error', err);
-    console.log('connection successful');
-});
+      User = require('../models/user'),
+      setUserInfo = require('../_helpers/setUserInfo').setUserInfo;
 
 function generateToken(user) {
   return jwt.sign(user, config.secret, {
-    expiresIn: 10080 // in seconds
+    expiresIn: 10000, // in seconds
   });
-}
-
-// Set user info from request
-function setUserInfo(request) {
-  return {
-    _id: request._id,
-    firstName: request.profile.firstName,
-    lastName: request.profile.lastName,
-    email: request.email,
-    role: request.role,
-  };
 }
 
 //========================================
@@ -60,7 +43,7 @@ exports.login = function(req, res, next) {
   let userInfo = setUserInfo(req);
 
   res.status(200).json({
-    token: 'JWT ' + generateToken(userInfo),
+    token: `JWT ${generateToken(userInfo)}`,
     user: userInfo
   });
 }
