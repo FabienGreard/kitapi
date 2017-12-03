@@ -50,9 +50,21 @@ module.exports = function(app) {
   //=========================
 
   // Set users routes as subgroup/middleware to apiRoutes
-  apiRoutes.use('/users', userRoutes, function(req, res) { index('API - api/users', [{ title: '/all', subtitle: 'Example :', line: ['Return a list of users','{', '"users": [', '{', '"_id": "xxxx",', '}', '{', '"_id": "xxxx",', '}', '}', ']']}, {title: '/+id', subtitle: 'Example :', line: [ 'Return one user', '{', '"email": "email@gmail.com"', '"password": "xxxxx",', '}' ]}], res) });
+  apiRoutes.use('/users', userRoutes, function(req, res) { index('API - api/users', [{ title: '/all', subtitle: 'Example :', line: ['Return a list of users','{', '"users": [', '{', '"_id": "xxxx",', '}', '{', '"_id": "xxxx",', '}', '}', ']']}, {title: '/:id', subtitle: 'Example :', line: [ 'Return one user', '{', '"email": "email@gmail.com"', '"password": "xxxxx",', '}' ]}, {title: '/:id', subtitle: 'Example :', line: [ 'Delete one user', '{', '"email": "email@gmail.com"', '"password": "xxxxx",', '}' ]}], res) });
 
-  userRoutes.get('/all', requireAuth, UserController.getAll);
+  userRoutes.get('/all', function(req, res, next){
+    passport.authenticate('jwt', function(err, req, info){
+      if (!req) { return res.status(401).send({ error: info.error }) }
+      UserController.getAll(req, res, next);
+    })(req, res, next);
+  });
+
+  userRoutes.delete('/:id', function(req, res, next){
+    passport.authenticate('jwt', function(err, req, info){
+      if (!req) { return res.status(401).send({ error: info.error }) }
+      UserController.delete(req, res, next);
+    })(req, res, next);
+  });
 
 // Set url for API group routes
   app.use('/', apiRoutes, function(req, res) { index('API', [{ title: '/auth', subtitle: '', line: ['/register', '/login']},{ title: '/users', subtitle: '', line: ['/', '/+id']}], res) });

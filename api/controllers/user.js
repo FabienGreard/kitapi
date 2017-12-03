@@ -22,7 +22,6 @@ exports.getById = function (req, res, next) {
 };
 
 exports.getAll = function (req, res, next) {
-
   User.find((err, users) => {
     if (err) {
       res.status(400).json({ error: 'Something gone wrong.' });
@@ -30,5 +29,16 @@ exports.getAll = function (req, res, next) {
     }
 
     return res.status(200).json({ users: users });
+  });
+};
+
+exports.delete = function (req, res, next) {
+  User.findByIdAndRemove(req.id, (err) => {
+    if (err) {
+      res.status(400).json({ error: 'Something gone wrong.' });
+      return next(err);
+    }
+
+    return res.status(200).json({ msg: "done" });
   });
 };

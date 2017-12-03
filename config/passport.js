@@ -10,7 +10,6 @@ const localOptions = { usernameField: 'email' };
 
 // Setting up local login strategy
 const localLogin = new LocalStrategy(localOptions, function(email, password, done) {
-  console.log('ok');
   User.findOne({ email: email }, function(err, user) {
     if(err) { return done(err); }
     if(!user) { return done(null, false, { error: "Impossible de vérifier vos données. Veuillez Recommencer." }); }
@@ -36,13 +35,12 @@ const jwtOptions = {
 
 // Setting up JWT login strategy
 const jwtLogin = new JwtStrategy(jwtOptions, (payload, done) => {
-  console.log(jwtOptions);
   User.findById(payload._id, (err, user) => {
-    if (err) { return done(err, false); }
+    if (err) { return done(err, false, { error: "Token invalide." }); }
     if (user) {
       done(null, user);
     } else {
-      done(null, false);
+      done(null, false, { error: "Token invalide." });
     }
   });
 });
