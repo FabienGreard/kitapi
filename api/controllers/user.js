@@ -47,13 +47,13 @@ exports.delete = function (req, res, next) {
 
 exports.update = function (req, res, next) {
   if(req){
-    User.findByIdAndUpdate(req.params.id, req.body, (err) => {
+    User.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, user, userUpdate) => {
       if (err) {
         res.status(400).json({ error: 'Something gone wrong.' });
         return next(err);
       }
 
-      return res.status(200).json({ msg: "done" });
+      return res.status(200).json({ user: user });
     });
   }
 };
