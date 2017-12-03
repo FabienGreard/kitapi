@@ -33,9 +33,21 @@ exports.getAll = function (req, res, next) {
 };
 
 exports.delete = function (req, res, next) {
-  console.log(req);
   if(req){
     User.findByIdAndRemove(req.params.id, (err) => {
+      if (err) {
+        res.status(400).json({ error: 'Something gone wrong.' });
+        return next(err);
+      }
+
+      return res.status(200).json({ msg: "done" });
+    });
+  }
+};
+
+exports.update = function (req, res, next) {
+  if(req){
+    User.findByIdAndUpdate(req.params.id, req.body, (err) => {
       if (err) {
         res.status(400).json({ error: 'Something gone wrong.' });
         return next(err);
