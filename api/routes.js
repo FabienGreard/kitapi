@@ -62,6 +62,7 @@ module.exports = function(app) {
   userRoutes.delete('/:id', function(req, res, next){
     passport.authenticate('jwt', function(err, req, info){
       if (!req) { return res.status(401).send({ error: info.error }) }
+
       UserController.delete(req, res, next);
     })(req, res, next);
   });

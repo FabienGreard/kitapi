@@ -33,7 +33,7 @@ exports.getAll = function (req, res, next) {
 };
 
 exports.delete = function (req, res, next) {
-  User.findByIdAndRemove(req.id, (err) => {
+  User.findByIdAndRemove(req.params.id, (err) => {
     if (err) {
       res.status(400).json({ error: 'Something gone wrong.' });
       return next(err);
