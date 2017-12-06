@@ -1,6 +1,7 @@
 const express = require('express'),
       AuthenticationController = require('./controllers/auth'),
       UserController = require('./controllers/user.js');
+      EngineController = require('./controllers/engine.js');
       passportService = require('../config/passport'),
       passport = require('passport'),
       passportService = require('../config/passport');
@@ -18,7 +19,8 @@ module.exports = function(app) {
   // Initializing route groups
   const apiRoutes = express.Router(),
         authRoutes = express.Router(),
-        userRoutes = express.Router();
+        userRoutes = express.Router(),
+        engineRoutes = express.Router();
 
   // Uri page helper
   function index(uri, helpers, res){
@@ -55,6 +57,7 @@ module.exports = function(app) {
   userRoutes.get('/all', function(req, res, next){
     passport.authenticate('jwt', function(err, user, info){
       if (!user) { return res.status(401).send({ error: info.error }) }
+
       UserController.getAll(req, res, next);
     })(req, res, next);
   });
@@ -72,6 +75,45 @@ module.exports = function(app) {
       if (!user) { return res.status(401).send({ error: info.error }) }
 
       UserController.update(req, res, next);
+    })(req, res, next);
+  });
+
+  //=========================
+  // Engines Routes
+  //=========================
+
+  // Set engines routes as subgroup/middleware to apiRoutes
+  apiRoutes.use('/engines', engineRoutes, function(req, res) { index('API - api/engines', [{ title: '/create', subtitle: 'Example :', line: ['{', '"Viseuses", // Must be unique', '"price": "100",', '"level": "Avanced",', '"comments": "xxxxxxx xxxx xxxx" // Optional', '}']}, {title: '/getAll', subtitle: 'Example :', line: [ 'return some engines' ]}], res) });
+
+  engineRoutes.post('/create', function(req, res, next){
+    passport.authenticate('jwt', function(err, user, info){
+      if (!user) { return res.status(401).send({ error: info.error }) }
+
+      EngineController.create(req, res, next);
+    })(req, res, next);
+  });
+
+  engineRoutes.get('/all', function(req, res, next){
+    passport.authenticate('jwt', function(err, user, info){
+      if (!user) { return res.status(401).send({ error: info.error }) }
+
+      EngineController.getAll(req, res, next);
+    })(req, res, next);
+  });
+
+  engineRoutes.delete('/:id', function(req, res, next){
+    passport.authenticate('jwt', function(err, user, info){
+      if (!user) { return res.status(401).send({ error: info.error }) }
+
+      EngineController.delete(req, res, next);
+    })(req, res, next);
+  });
+
+  engineRoutes.put('/:id', function(req, res, next){
+    passport.authenticate('jwt', function(err, user, info){
+      if (!user) { return res.status(401).send({ error: info.error }) }
+
+      EngineController.update(req, res, next);
     })(req, res, next);
   });
 
