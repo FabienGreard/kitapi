@@ -63,6 +63,17 @@ module.exports = function(app) {
     })(req, res, next);
   });
 
+  //getById user route
+  userRoutes.get('/:id', function(req, res, next){
+    passport.authenticate('jwt', function(err, user, info){
+      if (!user) { return res.status(401).send({ error: info.error }) }
+      if(user._id != req.params.id){
+        return res.status(401).send({ error: "Vous n'avez pas l'autorisation nécéssaire pour accéder à cette utilisateur" }) }
+
+      UserController.getById(req, res, next);
+    })(req, res, next);
+  });
+
   //delete user route
   userRoutes.delete('/:id', function(req, res, next){
     passport.authenticate('jwt', function(err, user, info){
