@@ -1,5 +1,7 @@
 const User = require('../models/user');
 const setUserInfo = require('../_helpers/setUserInfo').setUserInfo;
+const mailgun = require('../../config/mailgun');
+const crypto = require('crypto');
 
 //= =======================================
 // User Routes
@@ -56,4 +58,36 @@ exports.update = function (req, res, next) {
       return res.status(200).json({ user: user });
     });
   }
+};
+
+exports.forgotPassword = function (req, res, next) {
+  const email = req.body.email;
+
+  User.findOne({ email }, (err, existingUser) => {
+    // If user is not found, return error
+    if (err || existingUser == null) {
+      res.status(422).json({ error: 'Veuillez spécifier une adresse email valide.' }); //Your request could not be processed as entered. Please try again.
+      return next(err);
+    }
+
+    resetPasswd = crypto.randomBytes(6).toString('hex');
+    // If user is found, generate and save a password
+    existingUser.password = resetPasswd;
+
+    existingUser.save((err) => {
+        // If error in saving password, return it
+      if (err) { return next(err); }
+
+      const message = {
+        subject: 'Reset Password',
+        text: `${'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+          'Please used this new password:\n\n' + `${resetPasswd}` + ''}`
+      };
+
+        //send user email via Mailgun
+      mailgun.sendEmail(existingUser.email, message);
+
+      return res.status(200).json({ message: 'Please check your email for new your password.' });
+    });
+  });
 };

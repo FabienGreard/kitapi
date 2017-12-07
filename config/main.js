@@ -1,4 +1,8 @@
 module.exports = {
+  // Configuring Mailgun API for sending transactional email
+  mailgun_priv_key: 'key-b2b641004485d41b0a63815365c9da7d',
+  // Configuring Mailgun domain for sending transactional email
+  mailgun_domain: 'sandbox7416171c2f404415a2a93fd87c0e5308.mailgun.org',
   // Secret key for JWT signing and encryption
   'secret': '123456',
   // Database connection information
