@@ -19,6 +19,16 @@ const UserSchema = new mongoose.Schema({
       type: String,
       required: true,
       trim: true,
+    },
+    phone: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    gender: {
+      type: String,
+      enum: ['M', 'F', 'O'],
+      default: 'M'
     }
   },
   password: {

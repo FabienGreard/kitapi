@@ -98,9 +98,6 @@ exports.register = function(req, res, next) {
       user.save(function(err, user) {
         if (err) { return next(err); }
 
-        // Subscribe member to Mailchimp list
-        // mailchimp.subscribeToNewsletter(user.email);
-
         // Respond with JWT if user was created
 
         let userInfo = setUserInfo(user);

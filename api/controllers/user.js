@@ -15,10 +15,8 @@ exports.getById = function (req, res, next) {
       res.status(400).json({ error: 'No user could be found for this ID.' });
       return next(err);
     }
-    
-    const userToReturn = setUserInfo(user);
 
-    return res.status(200).json({ user: userToReturn });
+    return res.status(200).json({ user: user });
   });
 };
 
@@ -58,6 +56,53 @@ exports.update = function (req, res, next) {
     });
   }
 };
+
+exports.updatePassword = function (req, res, next) {
+
+  if(!req.body.lastPassword){
+    return res.status(422).send({ error: 'Veuillez spécifier votre ancien mot de passe.'});
+  }
+
+  if(!req.body.newPassword){
+    return res.status(422).send({ error: 'Veuillez spécifier un nouveau mot de passe.'});
+  }
+
+  if(!req.body.newPasswordCheck){
+    return res.status(422).send({ error: 'Veuillez spécifier la vérification du nouveau mot de passe.'});
+  }
+
+  if(req.body.newPassword !== req.body.newPasswordCheck){
+    return res.status(409).json({ error: 'Mot de passe non identique.' });
+  }
+
+  if(req){
+    User.findOne({ _id: req.params.id }, function(err, user) {
+      if (err) {
+        res.status(400).json({ error: 'Something gone wrong.' });
+        return next(err);
+      }
+
+      user.comparePassword(req.body.lastPassword, function(err, isMatch) {
+        if (err) {
+          return res.status(400).json({ error: 'Something gone wrong.' });
+        }
+        if (!isMatch) {
+          return res.status(409).json({ error: 'Mot de passe invalide.' });
+        }
+        user.password = req.body.newPassword;
+
+        user.save(function(err, user) {
+          if (err) { return next(err); }
+
+
+          res.status(200).json({
+            user: user
+          });
+        });
+      });
+    });
+  }
+}
 
 exports.forgotPassword = function (req, res, next) {
   const email = req.body.email;

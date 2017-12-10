@@ -95,6 +95,15 @@ module.exports = function(app) {
   //resetPassword route
   userRoutes.post('/resetPassword', UserController.forgotPassword);
 
+  //update user password route
+  userRoutes.put('/password/:id', function(req, res, next){
+    passport.authenticate('jwt', function(err, user, info){
+      if (!user) { return res.status(401).send({ error: info.error }) }
+
+      UserController.updatePassword(req, res, next);
+    })(req, res, next);
+  });
+
   //=========================
   // Engines Routes
   //=========================
