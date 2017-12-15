@@ -18,9 +18,8 @@ const EngineSchema = new mongoose.Schema({
     required: true,
   },
   level: {
-    type: String,
-    enum: ['Beginner', 'Intermediate', 'Advanced'],
-    default: 'Beginner'
+    type: Number,
+    default: 0
   },
   reserved: [
        {
