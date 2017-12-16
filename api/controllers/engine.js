@@ -8,7 +8,7 @@ exports.create = function(req, res, next){
   // Check for registration errors
   const name = req.body.name;
   const price = req.body.price;
-  const level = req.body.role || "Beginner";
+  const level = req.body.level || 0;
 
   // Return error if no email provided
   if (!name) {

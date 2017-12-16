@@ -17,6 +17,11 @@ const EngineSchema = new mongoose.Schema({
     trim: true,
     required: true,
   },
+  location:{
+    type: String,
+    trim: true,
+    default: 'FabLab Aix'
+  },
   level: {
     type: Number,
     default: 0
