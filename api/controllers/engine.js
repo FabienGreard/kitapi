@@ -1,4 +1,5 @@
 const Engine = require('../models/engine');
+const checkOldResevation = require('../_helpers/checkOldResevation').checkOldResevation;
 
 //= =======================================
 // Engine Routes
@@ -73,7 +74,10 @@ exports.getAll = function (req, res, next) {
       return next(err);
     }
 
-    return res.status(200).json({ engines: engines });
+    //temp
+    let enginesRecords = engines.map(engine => engine = checkOldResevation(engine));
+    
+    return res.status(200).json({ engines: enginesRecords });
   });
 };
 
