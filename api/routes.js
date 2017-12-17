@@ -147,6 +147,15 @@ module.exports = function(app) {
     })(req, res, next);
   });
 
+  //reservation engine route
+  engineRoutes.put('/reservation/:id', function(req, res, next){
+    passport.authenticate('jwt', function(err, user, info){
+      if (!user) { return res.status(401).send({ error: info.error }) }
+
+      EngineController.reservation(req, res, next);
+    })(req, res, next);
+  });
+
 // Set url for API group routes
   app.use('/', apiRoutes, function(req, res) { index('API', [{ title: '/auth', subtitle: '', line: ['/register', '/login']},{ title: '/users', subtitle: '', line: ['/', '/+id']}], res) });
 };

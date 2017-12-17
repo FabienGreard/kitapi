@@ -102,3 +102,59 @@ exports.update = function (req, res, next) {
     });
   }
 };
+
+exports.reservation = function (req, res, next) {
+  if(req){
+    const from = req.body.from;
+    const dateStart = req.body.dateStart;
+    const dateEnd = req.body.dateEnd;
+
+    Engine.findOne({ _id: req.params.id }, function(err, existingEngine) {
+        if (err) { return next(err); }
+
+        if(typeof existingEngine.reserved[0] === 'undefined'){
+          existingEngine.reserved.push({
+            "from": from,
+            "dateStart": dateStart,
+            "dateEnd": dateEnd,
+          })
+        }else{
+          const before = existingEngine.reserved.length;
+
+          existingEngine.reserved.map(value => {
+            const doc = value._doc;
+            if(new Date(doc["dateStart"]) < new Date(dateStart)){
+              if(new Date(doc["dateEnd"]) <= new Date(dateStart)){
+                existingEngine.reserved.push({
+                  "from": from,
+                  "dateStart": dateStart,
+                  "dateEnd": dateEnd,
+                })
+              }
+            }else{
+              if(new Date(doc["dateStart"]) >= new Date(dateEnd)){
+                existingEngine.reserved.push({
+                  "from": from,
+                  "dateStart": dateStart,
+                  "dateEnd": dateEnd,
+                })
+              }
+            }
+          });
+
+          if(before >= existingEngine.reserved.length){
+            return res.status(400).json({ error: 'Date déjà prise.' });
+          }
+        }
+
+        existingEngine.save(function(err, engine) {
+          if (err) { return res.status(400).json({ error: err }); }
+
+          //update
+          res.status(201).json({
+            engine: engine
+          });
+        });
+    });
+  }
+};
