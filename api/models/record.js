@@ -3,8 +3,14 @@ const mongoose = require('mongoose');
 // Define record schema
 const RecordSchema = new mongoose.Schema({
   from: String,
+  Engine: String,
   dateStart: Date,
-  dateEnd: Date
+  dateEnd: Date,
+  Status: {
+    type: String,
+    enum: ['Waiting', 'Accept', 'Cancel'],
+    default: 'Waiting'
+  },
   },
   {
   timestamps: false

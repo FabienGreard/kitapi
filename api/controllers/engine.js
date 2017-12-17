@@ -1,5 +1,6 @@
 const Engine = require('../models/engine');
-const checkOldResevation = require('../_helpers/checkOldResevation').checkOldResevation;
+const checkOldReservation = require('../_helpers/checkOldReservation').checkOldReservation;
+const record = require('./record');
 
 //= =======================================
 // Engine Routes
@@ -75,8 +76,8 @@ exports.getAll = function (req, res, next) {
     }
 
     //temp
-    let enginesRecords = engines.map(engine => engine = checkOldResevation(engine));
-    
+    let enginesRecords = engines.map(engine => engine = checkOldReservation(engine));
+
     return res.status(200).json({ engines: enginesRecords });
   });
 };
@@ -107,6 +108,7 @@ exports.update = function (req, res, next) {
   }
 };
 
+
 exports.reservation = function (req, res, next) {
   if(req){
     const from = req.body.from;
@@ -121,31 +123,34 @@ exports.reservation = function (req, res, next) {
             "from": from,
             "dateStart": dateStart,
             "dateEnd": dateEnd,
-          })
+          });
+          record.create(from, req.params.id, dateStart, dateEnd);
         }else{
           const before = existingEngine.reserved.length;
 
+          let open = true;
+
           existingEngine.reserved.map(value => {
             const doc = value._doc;
-            if(new Date(doc["dateStart"]) < new Date(dateStart)){
-              if(new Date(doc["dateEnd"]) <= new Date(dateStart)){
-                existingEngine.reserved.push({
-                  "from": from,
-                  "dateStart": dateStart,
-                  "dateEnd": dateEnd,
-                })
-              }
+            if(new Date(doc.dateStart).toLocaleString() < new Date(dateStart).toLocaleString() && new Date(doc.dateEnd).toLocaleString() < new Date(dateStart).toLocaleString()){
             }else{
-              if(new Date(doc["dateStart"]) >= new Date(dateEnd)){
-                existingEngine.reserved.push({
-                  "from": from,
-                  "dateStart": dateStart,
-                  "dateEnd": dateEnd,
-                })
+              if(new Date(doc.dateStart).toLocaleString() > new Date(dateStart).toLocaleString() && new Date(doc.dateStart).toLocaleString() > new Date(dateEnd).toLocaleString()){
+
+              }else{
+                open = false;
               }
             }
           });
 
+          if(open){
+            existingEngine.reserved.push({
+              "from": from,
+              "dateStart": dateStart,
+              "dateEnd": dateEnd,
+            });
+            record.create(from, req.params.id, dateStart, dateEnd);
+          }
+          
           if(before >= existingEngine.reserved.length){
             return res.status(400).json({ error: 'Date déjà prise.' });
           }

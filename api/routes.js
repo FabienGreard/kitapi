@@ -1,10 +1,11 @@
 const express = require('express'),
       AuthenticationController = require('./controllers/auth'),
-      UserController = require('./controllers/user.js');
-      EngineController = require('./controllers/engine.js');
+      UserController = require('./controllers/user.js'),
+      EngineController = require('./controllers/engine.js'),
+      RecordController = require('./controllers/record.js'),
       passportService = require('../config/passport'),
-      passport = require('passport'),
-      passportService = require('../config/passport');
+      passport = require('passport');
+
 
       // Constants for role types
       const REQUIRE_ADMIN = "Admin",
@@ -20,7 +21,8 @@ module.exports = function(app) {
   const apiRoutes = express.Router(),
         authRoutes = express.Router(),
         userRoutes = express.Router(),
-        engineRoutes = express.Router();
+        engineRoutes = express.Router(),
+        recordRoutes = express.Router();
 
   // Uri page helper
   function index(uri, helpers, res){
@@ -155,6 +157,32 @@ module.exports = function(app) {
       EngineController.reservation(req, res, next);
     })(req, res, next);
   });
+
+  //=========================
+  // Records Routes
+  //=========================
+
+  // Set records routes as subgroup/middleware to apiRoutes
+  apiRoutes.use('/records', recordRoutes, function(req, res) { index('API - api/records', [{ title: '/update', subtitle: 'Example :', line: ['{', '"from": "xxxx",', '"endDate": "xxxxxx",', '"stardDate": "xxxxxxx" // Optional', '}']}, {title: '/getByUserId', subtitle: 'Example :', line: [ 'return some records' ]}], res) });
+
+  //updateRecord
+  recordRoutes.put('/:id', function(req, res, next){
+    passport.authenticate('jwt', function(err, user, info){
+      if (!user) { return res.status(401).send({ error: info.error }) }
+
+      RecordController.update(req, res, next);
+    })(req, res, next);
+  });
+
+  //getbyUserId
+  recordRoutes.get('/:id', function(req, res, next){
+    passport.authenticate('jwt', function(err, user, info){
+      if (!user) { return res.status(401).send({ error: info.error }) }
+
+      RecordController.getByUserId(req, res, next);
+    })(req, res, next);
+  });
+
 
 // Set url for API group routes
   app.use('/', apiRoutes, function(req, res) { index('API', [{ title: '/auth', subtitle: '', line: ['/register', '/login']},{ title: '/users', subtitle: '', line: ['/', '/+id']}], res) });
