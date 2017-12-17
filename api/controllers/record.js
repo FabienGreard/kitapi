@@ -24,7 +24,7 @@ exports.getByUserId = function (req, res, next) {
 
     let recordsUser = records.filter(record => record.from === userId);
 
-    return res.status(200).json({ engines: enginesRecords });
+    return res.status(200).json({ records: recordsUser });
   });
 };
 
