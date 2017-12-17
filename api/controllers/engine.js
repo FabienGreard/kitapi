@@ -57,7 +57,6 @@ exports.create = function(req, res, next){
 exports.getById = function (req, res, next) {
   const engineId = req.params.id;
 
-  if (req.engine.id.toString() !== engineId) { return res.status(401).json({ error: 'You are not authorized to view this engine profile.' }); }
   Engine.findById(engineId, (err, engine) => {
     if (err) {
       res.status(400).json({ error: 'No engine could be found for this ID.' });
@@ -112,8 +111,8 @@ exports.update = function (req, res, next) {
 exports.reservation = function (req, res, next) {
   if(req){
     const from = req.body.from;
-    const dateStart = req.body.dateStart;
-    const dateEnd = req.body.dateEnd;
+    const date = req.body.date;
+    const duration = req.body.duration;
 
     Engine.findOne({ _id: req.params.id }, function(err, existingEngine) {
         if (err) { return next(err); }
@@ -121,10 +120,10 @@ exports.reservation = function (req, res, next) {
         if(typeof existingEngine.reserved[0] === 'undefined'){
           existingEngine.reserved.push({
             "from": from,
-            "dateStart": dateStart,
-            "dateEnd": dateEnd,
+            "date": date,
+            "duration": duration,
           });
-          record.create(from, req.params.id, dateStart, dateEnd);
+          record.create(from, req.params.id, date, duration, existingEngine.price);
         }else{
           const before = existingEngine.reserved.length;
 
@@ -132,9 +131,13 @@ exports.reservation = function (req, res, next) {
 
           existingEngine.reserved.map(value => {
             const doc = value._doc;
-            if(new Date(doc.dateStart).toLocaleString() < new Date(dateStart).toLocaleString() && new Date(doc.dateEnd).toLocaleString() < new Date(dateStart).toLocaleString()){
+            const dateDuration = new Date(new Date(doc.date).getTime() + (new Date(doc.duration).getHours() * 60 + new Date(doc.duration).getMinutes()) * 60000 ).toLocaleString();
+
+            const dateDurationUser = new Date(new Date(date).getTime() + (new Date(duration).getHours() * 60 + new Date(duration).getMinutes()) * 60000 ).toLocaleString();
+
+            if(new Date(doc.date).toLocaleString() < new Date(date).toLocaleString() && dateDuration <= new Date(date).toLocaleString()){
             }else{
-              if(new Date(doc.dateStart).toLocaleString() > new Date(dateStart).toLocaleString() && new Date(doc.dateStart).toLocaleString() > new Date(dateEnd).toLocaleString()){
+              if(new Date(doc.date).toLocaleString() > new Date(date).toLocaleString() && new Date(doc.date).toLocaleString() >= dateDurationUser){
 
               }else{
                 open = false;
@@ -145,12 +148,12 @@ exports.reservation = function (req, res, next) {
           if(open){
             existingEngine.reserved.push({
               "from": from,
-              "dateStart": dateStart,
-              "dateEnd": dateEnd,
+              "date": date,
+              "duration": duration,
             });
-            record.create(from, req.params.id, dateStart, dateEnd);
+            record.create(from, req.params.id, date, duration, existingEngine.price);
           }
-          
+
           if(before >= existingEngine.reserved.length){
             return res.status(400).json({ error: 'Date déjà prise.' });
           }

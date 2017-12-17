@@ -30,8 +30,8 @@ const EngineSchema = new mongoose.Schema({
     {
       _id: false,
       from: String,
-      dateStart: Date,
-      dateEnd: Date,
+      date: Date,
+      duration: Date,
     }
    ],
   },

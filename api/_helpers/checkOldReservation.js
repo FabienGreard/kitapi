@@ -1,9 +1,11 @@
 exports.checkOldReservation = function(engine){
   if(typeof engine.reserved[0] !== 'undefined'){
-    const dateNow = new Date()
+    const dateNow = new Date().toLocaleString();
     engine.reserved.map((value, key) => {
       const doc = value._doc;
-      if(new Date(doc["dateStart"]) < dateNow && new Date(doc["dateEnd"]) < dateNow){
+      const dateDuration = new Date(new Date(doc.date).getTime() + (new Date(doc.duration).getHours() * 60 + new Date(doc.duration).getMinutes()) * 60000 ).toLocaleString();
+
+      if(dateDuration <= dateNow){
         //clean
         engine.reserved.splice(key, 1);
       }

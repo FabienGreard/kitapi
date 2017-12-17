@@ -1,11 +1,12 @@
 const Record = require('../models/record');
 
-exports.create = function(from, engine, dateStart, dateEnd){
+exports.create = function(from, engine, date, duration, price){
   let record = new Record({
     "from": from,
     "engine": engine,
-    "dateStart": dateStart,
-    "dateEnd": dateEnd,
+    "date": date,
+    "duration": duration,
+    "price": price
   });
 
   record.save(function(err, record) {
