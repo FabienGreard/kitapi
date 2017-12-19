@@ -1,5 +1,9 @@
 const Record = require('../models/record');
 
+//= =======================================
+// Record Routes
+//= =======================================
+
 exports.create = function(from, engine, date, duration, price){
   let record = new Record({
     "from": from,

@@ -4,8 +4,9 @@ const express = require('express'),
       EngineController = require('./controllers/engine.js'),
       RecordController = require('./controllers/record.js'),
       passportService = require('../config/passport'),
-      passport = require('passport');
-
+      passport = require('passport'),
+      multer = require('multer'),
+      upload = multer({ dest: './public/' });
 
       // Constants for role types
       const REQUIRE_ADMIN = "Admin",
@@ -128,6 +129,25 @@ module.exports = function(app) {
       if (!user) { return res.status(401).send({ error: info.error }) }
 
       EngineController.getAll(req, res, next);
+    })(req, res, next);
+  });
+
+  //getImageById engine route
+  engineRoutes.get('/img/:id', function(req, res, next){
+    passport.authenticate('jwt', function(err, user, info){
+      if (!user) { return res.status(401).send({ error: info.error }) }
+
+      EngineController.getImageById(req, res, next);
+    })(req, res, next);
+  });
+
+  //updateImageById engine route
+  engineRoutes.put('/img/:id', upload.single('img'), function(req, res, next){
+    console.log(req.file);
+    passport.authenticate('jwt', function(err, user, info){
+      if (!user) { return res.status(401).send({ error: info.error }) }
+
+      EngineController.updateImageById(req, res, next);
     })(req, res, next);
   });
 

@@ -1,6 +1,7 @@
 const Engine = require('../models/engine');
 const checkOldReservation = require('../_helpers/checkOldReservation').checkOldReservation;
 const record = require('./record');
+var fs = require('fs');
 
 //= =======================================
 // Engine Routes
@@ -11,6 +12,7 @@ exports.create = function(req, res, next){
   const name = req.body.name;
   const price = req.body.price;
   const level = req.body.level || 0;
+  const img = './public/defaultEngine.png';
 
   // Return error if no email provided
   if (!name) {
@@ -42,6 +44,9 @@ exports.create = function(req, res, next){
         level: level,
       });
 
+      engine.img.data = fs.readFileSync(img);
+      engine.img.contentType = 'image/png';
+
       engine.save(function(err, engine) {
         if (err) { return next(err); }
 
@@ -54,7 +59,7 @@ exports.create = function(req, res, next){
 
 };
 
-exports.getById = function (req, res, next) {
+exports.getImageById = function (req, res, next) {
   const engineId = req.params.id;
 
   Engine.findById(engineId, (err, engine) => {
@@ -62,10 +67,39 @@ exports.getById = function (req, res, next) {
       res.status(400).json({ error: 'No engine could be found for this ID.' });
       return next(err);
     }
-
-    return res.status(200).json({ engine: engine });
+    res.contentType(engine.img.contentType);
+    return res.send(engine.img.data);
   });
 };
+
+exports.updateImageById = function (req, res, next) {
+  const engineId = req.params.id;
+  const img = req.file;
+
+  if(typeof req.file === 'undefined'){
+    return res.status(400).json({ error: 'Veuillez envoyer une image.' });
+  }
+
+  Engine.findById(engineId, (err, engine) => {
+    if (err) {
+      res.status(400).json({ error: 'No engine could be found for this ID.' });
+      return next(err);
+    }
+    engine.img.data = fs.readFileSync(img.path);
+    engine.img.contentType = 'image/png';
+
+    fs.unlink(img.path);
+
+    engine.save(function(err, engine) {
+      if (err) { return next(err); }
+
+      res.contentType(engine.img.contentType);
+      //update an engine
+      res.send(engine.img.data);
+    });
+  });
+};
+
 
 exports.getAll = function (req, res, next) {
   Engine.find((err, engines) => {
@@ -106,7 +140,6 @@ exports.update = function (req, res, next) {
     });
   }
 };
-
 
 exports.reservation = function (req, res, next) {
   if(req){

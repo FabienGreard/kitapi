@@ -41,6 +41,7 @@ const jwtLogin = new JwtStrategy(jwtOptions, (payload, done) => {
       done(null, user);
     } else {
       done(null, false, { error: "Token invalide." });
+      console.log('')
     }
   });
 });
