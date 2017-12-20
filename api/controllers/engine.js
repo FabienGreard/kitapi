@@ -63,10 +63,10 @@ exports.getImageById = function (req, res, next) {
   const engineId = req.params.id;
 
   Engine.findById(engineId, (err, engine) => {
-    if (err) {
-      res.status(400).json({ error: 'No engine could be found for this ID.' });
-      return next(err);
+    if (err || engine === null) {
+      return res.status(400).json({ error: 'No engine could be found for this ID.' });
     }
+
     res.contentType(engine.img.contentType);
     return res.send(engine.img.data);
   });
@@ -81,9 +81,9 @@ exports.updateImageById = function (req, res, next) {
   }
 
   Engine.findById(engineId, (err, engine) => {
-    if (err) {
-      res.status(400).json({ error: 'No engine could be found for this ID.' });
-      return next(err);
+    if (err || engine === null) {
+      fs.unlink(img.path);
+      return res.status(400).json({ error: 'No engine could be found for this ID.' });
     }
     engine.img.data = fs.readFileSync(img.path);
     engine.img.contentType = 'image/png';

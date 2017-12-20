@@ -61,7 +61,6 @@ module.exports = function(app) {
   userRoutes.get('/all', function(req, res, next){
     passport.authenticate('jwt', function(err, user, info){
       if (!user) { return res.status(401).send({ error: info.error }) }
-
       UserController.getAll(req, res, next);
     })(req, res, next);
   });

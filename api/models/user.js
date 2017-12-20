@@ -50,8 +50,6 @@ UserSchema.pre('save', function(next) {
   const user = this,
         SALT_FACTOR = 5;
 
-  console.log(user);
-
   //capitalize
   this.profile.firstName = this.profile.firstName.charAt(0).toUpperCase() + this.profile.firstName.slice(1);
   this.profile.lastName = this.profile.lastName.charAt(0).toUpperCase() + this.profile.lastName.slice(1);
