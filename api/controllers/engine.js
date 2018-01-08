@@ -13,6 +13,8 @@ exports.create = function(req, res, next){
   const price = req.body.price;
   const level = req.body.level || 0;
   const img = './public/defaultEngine.png';
+  const comments = req.body.comments;
+  const location = req.body.location;
 
   // Return error if no email provided
   if (!name) {
@@ -42,6 +44,8 @@ exports.create = function(req, res, next){
         name: name,
         price: price,
         level: level,
+        comments: comments,
+        location: location
       });
 
       engine.img.data = fs.readFileSync(img);
