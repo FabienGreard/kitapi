@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken'),
-      crypto = require('crypto'),
       config = require('../../config/main'),
       User = require('../models/user'),
       setUserInfo = require('../_helpers/setUserInfo').setUserInfo;
