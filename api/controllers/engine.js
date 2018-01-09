@@ -121,6 +121,20 @@ exports.getAll = function (req, res, next) {
   });
 };
 
+exports.syncAll = function(req, res, next) {
+  Engine.find((err, engines) => {
+    if (err) {
+      res.status(400).json({ error: 'Something gone wrong.' });
+      return next(err);
+    }
+
+    //temp
+    let enginesRecords = engines.map(engine => engine = checkOldReservation(engine));
+
+    return res.json({ engines: enginesRecords });
+  });
+};
+
 exports.delete = function (req, res, next) {
   if(req){
     Engine.findByIdAndRemove(req.params.id, (err) => {

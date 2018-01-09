@@ -131,6 +131,9 @@ module.exports = function(app) {
     })(req, res, next);
   });
 
+  //getAll without permissions
+  engineRoutes.get('/syncAll', EngineController.syncAll);
+
   //getImageById engine route
   engineRoutes.get('/img/:id', function(req, res, next){
     passport.authenticate('jwt', function(err, user, info){
