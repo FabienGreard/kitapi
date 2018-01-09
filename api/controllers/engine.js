@@ -80,8 +80,9 @@ exports.updateImageById = function (req, res, next) {
   const engineId = req.params.id;
   const img = req.file;
 
-  if(typeof req.file === 'undefined'){
-    return res.status(400).json({ error: 'Veuillez envoyer une image.' });
+  if(typeof req.file === 'undefined' || img.mimetype !== 'image/jpeg' && img.mimetype !== 'image/png'){
+    if(img.path){ fs.unlink(img.path) }
+    return res.status(400).json({ error: 'Veuillez envoyer une image. (jpeg ou png)' });
   }
 
   Engine.findById(engineId, (err, engine) => {
@@ -90,7 +91,7 @@ exports.updateImageById = function (req, res, next) {
       return res.status(400).json({ error: 'No engine could be found for this ID.' });
     }
     engine.img.data = fs.readFileSync(img.path);
-    engine.img.contentType = 'image/png';
+    engine.img.contentType = img.mimetype;
 
     fs.unlink(img.path);
 
