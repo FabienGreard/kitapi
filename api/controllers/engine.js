@@ -135,6 +135,7 @@ exports.delete = function (req, res, next) {
 };
 
 exports.update = function (req, res, next) {
+  delete req.body.img; // no img updated
   if(req){
     Engine.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, engine, engineUpdate) => {
       if (err) {
