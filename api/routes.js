@@ -141,8 +141,7 @@ module.exports = function(app) {
   });
 
   //updateImageById engine route
-  engineRoutes.put('/img/:id', upload.single('img'), function(req, res, next){
-    console.log(req.file);
+  engineRoutes.put('/img/:id', upload.single('file'), function(req, res, next){
     passport.authenticate('jwt', function(err, user, info){
       if (!user) { return res.status(401).send({ error: info.error }) }
 

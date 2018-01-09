@@ -95,11 +95,12 @@ exports.updateImageById = function (req, res, next) {
     fs.unlink(img.path);
 
     engine.save(function(err, engine) {
-      if (err) { return next(err); }
+      if (err) { return res.status(400).json({ error: err }); }
 
-      res.contentType(engine.img.contentType);
-      //update an engine
-      res.send(engine.img.data);
+      res.status(201).json({
+        engine: engine
+      });
+
     });
   });
 };
