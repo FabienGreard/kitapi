@@ -26,14 +26,11 @@ var io = require('socket.io')(server);
  * Create a socket.
  */
 
- let interval;
-
  io.on("connection", socket => {
    console.log("New client connected");
-   if (interval) {
-     clearInterval(interval);
-   }
-   interval = setInterval(() => getApiAndEmit(socket), 10000);
+   socket.on("engines", () => {
+     getApiAndEmit(socket); // notify client when engines has change
+   });
    socket.on("disconnect", () => {
      console.log("Client disconnected");
    });
@@ -50,7 +47,7 @@ function getApiAndEmit(socket){
           });
 
           response.on('end', function() {
-            socket.emit("FromAPI", JSON.parse(body));
+            io.emit("FromAPI", JSON.parse(body));
           });
        }
      );
