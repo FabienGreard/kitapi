@@ -10,7 +10,6 @@ exports.checkOldReservation = function(engine){
         engine.reserved.splice(key, 1);
       }
     })
-    //console.log(engine);
     engine.save(function(err, engine) {
       if (err) {  return next(err); }
       return engine;
